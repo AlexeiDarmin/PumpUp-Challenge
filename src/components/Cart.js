@@ -1,3 +1,5 @@
+// Convert to swipe-able banner
+
 import React, { PropTypes } from 'react'
 import Product from './Product'
 

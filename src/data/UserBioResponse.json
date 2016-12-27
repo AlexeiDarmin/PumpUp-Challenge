@@ -1,0 +1,74 @@
+{
+  "activityLogCount": 7,
+  "badgeCount": 2875,
+  "lastPostDate": {
+    "__type": "Date",
+    "iso": "2016-12-26T15:06:42.049Z"
+  },
+  "name": "pumpup",
+  "workoutLogCount": 29,
+  "bio": "Achieve and celebrate your health goals with the world's most positive community! \n\nIt's #HealthyHolidays! Show us how you're staying healthy all month long 💪🌍\n\nFollow us on 👻 Snapchat @PumpUp\n\nRecipes + Workouts + Advice ⬇️",
+  "birthday": {
+    "__type": "Date",
+    "iso": "1992-02-17T00:00:00.000Z"
+  },
+  "email": "admin@pumpup.co",
+  "equipment": {
+    "1": [
+      4
+    ]
+  },
+  "followerCount": 667250,
+  "followingCount": 140,
+  "followingFeedLastReadAt": {
+    "__type": "Date",
+    "iso": "2016-10-17T13:45:46.905Z"
+  },
+  "gender": 2,
+  "goal": 4,
+  "heightUnit": 1,
+  "heightVal1": 5,
+  "heightVal2": 1,
+  "isDebug": true,
+  "lastPushNotificationPrompt": {
+    "__type": "Date",
+    "iso": "2016-11-01T14:08:37.153Z"
+  },
+  "lastRatePrompt": {
+    "__type": "Date",
+    "iso": "2014-05-27T19:03:52.397Z"
+  },
+  "lastVersionUsed": "3.7.2",
+  "level": 2,
+  "location": "Toronto, Canada",
+  "needsPasswordImport": false,
+  "needsToSeePushNotificationPrompt": false,
+  "newFeedLastReadAt": {
+    "__type": "Date",
+    "iso": "2016-11-01T16:45:54.593Z"
+  },
+  "platform": 2,
+  "popularFeedLastReadAt": {
+    "__type": "Date",
+    "iso": "2016-11-01T16:45:57.563Z"
+  },
+  "postCount": 2464,
+  "profileImage": "http://files.parsetfss.com/aac0413c-eada-4602-9451-2ee5da7d1241/tfss-dee577e7-00d3-4ce2-8f68-53ad9e171b8e-profilePic411168044.jpeg",
+  "profileThumbnail": "http://files.parsetfss.com/aac0413c-eada-4602-9451-2ee5da7d1241/tfss-a3052c36-5afe-4214-b34b-1a466dcfb9df-profilePic411168044.jpeg",
+  "ratedApp": true,
+  "role": 3,
+  "seenRatePrompt": true,
+  "timezone": "America/New_York",
+  "website": "blog.pumpup.com",
+  "weight": 125,
+  "weightUnit": 1,
+  "createdAt": "2014-02-03T07:21:44.372Z",
+  "updatedAt": "2016-12-26T17:21:24.372Z",
+  "className": "User",
+  "settings": {
+    "__type": "Pointer",
+    "className": "Settings",
+    "objectId": 2264965
+  },
+  "objectId": 318381
+}
