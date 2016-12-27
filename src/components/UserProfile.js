@@ -9,7 +9,6 @@ class UserProfile extends React.Component {
 
     this.state = {
       expanded: false,
-      bio: 'Achieve and celebrate your health goals with the world\'s most positive community! \n\nIt\'s #HealthyHolidays! Show us how you\'re staying healthy all month long 💪🌍\n\nFollow us on 👻 Snapchat @PumpUp\n\nRecipes + Workouts + Advice ⬇️',
       snippet: ''
     }
 
@@ -28,7 +27,7 @@ class UserProfile extends React.Component {
   }
 
   truncateBio () {
-    const { bio } = this.state
+    const { bio } = this.props
     const truncatorNode = document.getElementById('truncator')
     const bioNode = document.getElementById('bio')
 
@@ -40,25 +39,23 @@ class UserProfile extends React.Component {
 
     if (truncatorWidth / BIO_MAX_LINES <= bioWidth) { return bio }
 
-    const ratio = bioWidth / truncatorWidth * 100
-    const lineLength = Math.floor(bio.length * ratio / 105)
+    const ratio = bioWidth / truncatorWidth * 110
+    const lineLength = Math.floor(bio.length * ratio / 110)
 
     let newSnippet = ''
 
     for (let i = 0; i < BIO_MAX_LINES; ++i) {
-      newSnippet += bio.slice(lineLength * i, lineLength * (i + 1))
+      newSnippet += bio.substring(lineLength * i, lineLength * (i + 1))
     }
 
-    console.log(ratio, lineLength)
-
-    newSnippet = newSnippet.slice(0, -20)
+    newSnippet = newSnippet.slice(0, -1 * (lineLength / 1.5))
 
     return newSnippet
   }
 
   addLinkMentions (text) {
 
-    const linkify = (mention) => <a href={mention}>{mention}</a>
+    const linkify = (mention, i) => <a href={mention} key={i}>{mention}</a>
     let finalString = []
     let linkStartIndex = -1
     let base = 0
@@ -71,7 +68,7 @@ class UserProfile extends React.Component {
         finalString.push(' ' + text.slice(base, i - 1) + ' ')
         base = i
       } else if (linkStartIndex !== -1 && (c === ' ' || c === '\n')){
-        finalString.push(linkify(text.slice(linkStartIndex, i)))
+        finalString.push(linkify(text.slice(linkStartIndex, i), i))
         linkStartIndex = -1
         base = i
       }
@@ -82,7 +79,16 @@ class UserProfile extends React.Component {
     return finalString
   }
 
+  componentWillUpdate(nextProps, nextState){
+    const { bio } = nextProps
+    document.getElementById('truncator').innerHTML = bio
+  }
+
   componentWillMount () {
+    const { bio } = this.props
+    const root = document.getElementById('root')
+    root.insertAdjacentHTML('afterend', '<div id="truncator" class="userBio">' + bio + '</div>')
+
     this.setState({snippet: this.truncateBio()})
   }
 
@@ -96,10 +102,13 @@ class UserProfile extends React.Component {
     const runTruncate = () => this.setState({snippet: this.truncateBio()})
 
     window.removeEventListener('resize', runTruncate)
+    document.getElementById('truncator').remove();
+
   }
 
   render(){
-    const { expanded, snippet, bio } = this.state
+    const { expanded, snippet } = this.state
+    const { bio, name, profileThumbnail } = this.props
 
     const expandable = bio !== snippet
 
@@ -110,14 +119,12 @@ class UserProfile extends React.Component {
       summary = this.addLinkMentions(snippet)
     }
 
-
-
     return (
       <div className='userContainer'>
-        <img className='userThumbnail' alt='Profile Thumbnail' src="http://files.parsetfss.com/aac0413c-eada-4602-9451-2ee5da7d1241/tfss-a3052c36-5afe-4214-b34b-1a466dcfb9df-profilePic411168044.jpeg" />
+        <img className='userThumbnail' alt='Profile Thumbnail' src={profileThumbnail} />
         <div style={{width: '100%'}}>
           <h2 className='userName'>
-            pumpup
+            {name}
           </h2>
 
           <span

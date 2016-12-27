@@ -6,6 +6,10 @@ const receiveProducts = products => ({
   products: products
 })
 
+export const loadUserProfile = () => dispatch => {
+  dispatch({ type: types.LOAD_USER_PROFILE })
+}
+
 export const getAllProducts = () => dispatch => {
   shop.getProducts(products => {
     dispatch(receiveProducts(products))
