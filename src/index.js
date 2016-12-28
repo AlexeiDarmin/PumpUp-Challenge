@@ -5,13 +5,13 @@ import { Provider } from 'react-redux'
 import createLogger from 'redux-logger'
 import thunk from 'redux-thunk'
 import reducer from './reducers'
-import { loadUserProfile } from './actions'
+import { loadUserProfile, fetchPopularFeedPhotos } from './actions'
 import App from './containers/App'
 
 
-const middleware = [ thunk ];
+const middleware = [ thunk ]
 if (process.env.NODE_ENV !== 'production') {
-  middleware.push(createLogger());
+  middleware.push(createLogger())
 }
 
 const store = createStore(
@@ -19,10 +19,9 @@ const store = createStore(
   applyMiddleware(...middleware)
 )
 
-// store.dispatch(getAllProducts())
 
 store.dispatch(loadUserProfile())
-// store.dispatch(getUserPhotoFeed)
+store.dispatch(fetchPopularFeedPhotos())
 // store.dispatch(getUserPopularPhotos)
 
 render(
@@ -31,11 +30,3 @@ render(
   </Provider>,
   document.getElementById('root')
 )
-
-
-// render(
-//   <div>
-//     <App />
-//   </div>,
-//   document.getElementById('root')
-// )

@@ -1,21 +1,23 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { getUserProfile } from '../reducers'
-
-// import { checkout } from '../actions'
-
+import { getUserProfile, getPopularPhotosFeed } from '../reducers'
 import UserProfile from '../components/UserProfile'
+import PopularPhotosFeed from '../components/PopularPhotosFeed'
 
 class App extends React.Component {
   render(){
     const { bio, name, profileThumbnail } = this.props.userProfile
+    const { thumbnails } = this.props.popularPhotosFeed
 
     return (
-      <UserProfile
-        bio={bio}
-        name={name}
-        profileThumbnail={profileThumbnail}
-        />
+      <div style={{maxWidth: 800, margin: 'auto'}}>
+        <UserProfile
+          bio={bio}
+          name={name}
+          profileThumbnail={profileThumbnail}
+          />
+        <PopularPhotosFeed thumbnails={thumbnails} />
+      </div>
     )
   }
 }
@@ -30,7 +32,8 @@ App.propTypes = {
 
 
 const mapStateToProps = (state) => ({
-  userProfile: getUserProfile(state)
+  userProfile:        getUserProfile(state),
+  popularPhotosFeed:  getPopularPhotosFeed(state)
 })
 
 export default connect(

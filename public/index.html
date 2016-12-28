@@ -8,12 +8,12 @@
 
   <style>
     body{
-      margin: 0
+      margin: 0;
+      background:gray;
     }
     body, h1, h2, span, p, div {
       font-family: Helvetica, sans-serif;
     }
-
 
     .userBio {
       font-size: 0.85em;
@@ -62,6 +62,27 @@
       white-space: nowrap;
       overflow: auto;
       text-overflow: visible;
+    }
+
+    .popularPhotosFeed {
+      width: 100%;
+      margin:0;
+      padding: 0;
+      font-size: 0;
+    }
+
+    .popularPhoto{
+      width: calc(100% / 3);
+      box-sizing: border-box;
+      border: 1px solid white;
+      margin:0;
+    }
+
+    .popularPhoto:nth-child(3n + 1){
+      border-left: none;
+    }
+    .popularPhoto:nth-child(2n + 1){
+      border-right: none;
     }
   </style>
 

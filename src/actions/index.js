@@ -1,44 +1,36 @@
-import shop from '../api/shop'
 import * as types from '../constants/ActionTypes'
 
-const receiveProducts = products => ({
-  type: types.RECEIVE_PRODUCTS,
-  products: products
-})
-
-export const loadUserProfile = () => dispatch => {
-  dispatch({ type: types.LOAD_USER_PROFILE })
-}
-
-export const getAllProducts = () => dispatch => {
-  shop.getProducts(products => {
-    dispatch(receiveProducts(products))
-  })
-}
-
-const addToCartUnsafe = productId => ({
-  type: types.ADD_TO_CART,
-  productId
-})
-
-export const addToCart = productId => (dispatch, getState) => {
-  if (getState().products.byId[productId].inventory > 0) {
-    dispatch(addToCartUnsafe(productId))
+const requestBodies = {
+  getUserProfile : {
+    "_method": "GET",
+    "_version": "4.7.0",
+    "_SessionToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g"
+  },
+  fetchPopularFeedPhotos: {
+    "isThumbnailsOnly": true,
+    "limit": 18,
+    "_method": "POST",
+    "_version": "4.7.0",
+    "_SessionToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g"
   }
 }
 
-export const checkout = products => (dispatch, getState) => {
-  const { cart } = getState()
+export const fetchPopularFeedPhotos = () => (dispatch) => {
+  return fetch('http://api.pumpup.com/1/functions/feed/popular/load-batch', {
+    headers: {'Content-Type': 'application/json'},
+    method: 'POST',
+    body: JSON.stringify(requestBodies.fetchPopularFeedPhotos)
+  })
+  .then((response) => response.json())
+  .then((result) => dispatch({ type: types.FETCH_POPULAR_FEED_PHOTOS, payload: result }))
+}
 
-  dispatch({
-    type: types.CHECKOUT_REQUEST
+export const loadUserProfile = () => (dispatch) => {
+  return fetch('http://api.pumpup.com/1/classes/User/318381', {
+    headers: {'Content-Type': 'application/json'},
+    method: 'POST',
+    body: JSON.stringify(requestBodies.getUserProfile)
   })
-  shop.buyProducts(products, () => {
-    dispatch({
-      type: types.CHECKOUT_SUCCESS,
-      cart
-    })
-    // Replace the line above with line below to rollback on failure:
-    // dispatch({ type: types.CHECKOUT_FAILURE, cart })
-  })
+  .then((response) => response.json())
+  .then((result) => dispatch({ type: types.LOAD_USER_PROFILE, payload: result }))
 }

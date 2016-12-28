@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 
 const BIO_MAX_LINES = 3
 
@@ -19,19 +19,19 @@ class UserProfile extends React.Component {
 
   toggleBio(){
     const { expanded } = this.state
+    const { bio } = this.props
 
     this.setState({
       expanded: !expanded,
-      snippet: this.truncateBio()
+      snippet: this.truncateBio(bio)
     })
   }
 
-  truncateBio () {
-    const { bio } = this.props
+  truncateBio (bio) {
     const truncatorNode = document.getElementById('truncator')
     const bioNode = document.getElementById('bio')
 
-    // Nodes not yet rendered
+    // Abort if nodes are not yet rendered
     if (!truncatorNode || !bioNode) { return bio }
 
     const truncatorWidth = truncatorNode.offsetWidth
@@ -54,7 +54,6 @@ class UserProfile extends React.Component {
   }
 
   addLinkMentions (text) {
-
     const linkify = (mention, i) => <a href={mention} key={i}>{mention}</a>
     let finalString = []
     let linkStartIndex = -1
@@ -79,9 +78,12 @@ class UserProfile extends React.Component {
     return finalString
   }
 
-  componentWillUpdate(nextProps, nextState){
+  componentWillReceiveProps(nextProps) {
     const { bio } = nextProps
     document.getElementById('truncator').innerHTML = bio
+
+    //Allows DOM to render before calling truncateBio
+    setTimeout(() => this.setState({snippet: this.truncateBio(bio)}), 0)
   }
 
   componentWillMount () {
@@ -89,21 +91,25 @@ class UserProfile extends React.Component {
     const root = document.getElementById('root')
     root.insertAdjacentHTML('afterend', '<div id="truncator" class="userBio">' + bio + '</div>')
 
-    this.setState({snippet: this.truncateBio()})
+    //Allows DOM to render before calling truncateBio
+    setTimeout(() => this.setState({snippet: this.truncateBio(bio)}), 0)
   }
 
   componentDidMount () {
-    const runTruncate = () => this.setState({snippet: this.truncateBio()})
+    const runTruncate = () => {
+      this.setState({snippet: this.truncateBio(this.props.bio)})
+    }
     runTruncate()
     window.addEventListener('resize', runTruncate)
   }
 
   componentWillUnmount () {
-    const runTruncate = () => this.setState({snippet: this.truncateBio()})
+    const runTruncate = () => {
+      return this.setState({snippet: this.truncateBio(this.props.bio)})
+    }
 
     window.removeEventListener('resize', runTruncate)
-    document.getElementById('truncator').remove();
-
+    document.getElementById('truncator').remove()
   }
 
   render(){
@@ -121,7 +127,11 @@ class UserProfile extends React.Component {
 
     return (
       <div className='userContainer'>
-        <img className='userThumbnail' alt='Profile Thumbnail' src={profileThumbnail} />
+        <img
+          className='userThumbnail'
+          alt='Profile Thumbnail'
+          src={profileThumbnail}
+        />
         <div style={{width: '100%'}}>
           <h2 className='userName'>
             {name}
@@ -141,4 +151,11 @@ class UserProfile extends React.Component {
     )
   }
 }
+
+UserProfile.propTypes = {
+  bio: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  profileThumbnail: PropTypes.string.isRequired
+}
+
 export default UserProfile
