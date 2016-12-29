@@ -39,8 +39,8 @@ class UserProfile extends React.Component {
 
     if (truncatorWidth / BIO_MAX_LINES <= bioWidth) { return bio }
 
-    const ratio = bioWidth / truncatorWidth * 110
-    const lineLength = Math.floor(bio.length * ratio / 110)
+    const ratio = bioWidth / truncatorWidth * 100
+    const lineLength = Math.floor(bio.length * ratio / 100)
 
     let newSnippet = ''
 
@@ -48,7 +48,7 @@ class UserProfile extends React.Component {
       newSnippet += bio.substring(lineLength * i, lineLength * (i + 1))
     }
 
-    newSnippet = newSnippet.slice(0, -1 * (lineLength / 1.5))
+    newSnippet = newSnippet.slice(0, -1 * (lineLength / 1.75))
 
     return newSnippet
   }
@@ -80,22 +80,17 @@ class UserProfile extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { bio } = nextProps
-    document.getElementById('truncator').innerHTML = bio
-
-    //Allows DOM to render before calling truncateBio
-    setTimeout(() => this.setState({snippet: this.truncateBio(bio)}), 0)
-  }
-
-  componentWillMount () {
-    const { bio } = this.props
-    const root = document.getElementById('root')
-    root.insertAdjacentHTML('afterend', '<div id="truncator" class="userBio">' + bio + '</div>')
 
     //Allows DOM to render before calling truncateBio
     setTimeout(() => this.setState({snippet: this.truncateBio(bio)}), 0)
   }
 
   componentDidMount () {
+    const { bio } = this.props
+
+    //Allows DOM to render before calling truncateBio
+    setTimeout(() => this.setState({snippet: this.truncateBio(bio)}), 0)
+
     const runTruncate = () => {
       this.setState({snippet: this.truncateBio(this.props.bio)})
     }
@@ -109,7 +104,6 @@ class UserProfile extends React.Component {
     }
 
     window.removeEventListener('resize', runTruncate)
-    document.getElementById('truncator').remove()
   }
 
   render(){
@@ -127,6 +121,7 @@ class UserProfile extends React.Component {
 
     return (
       <div className='userContainer'>
+        <div id="truncator" className="userBio"> {bio} </div>
         <img
           className='userThumbnail'
           alt='Profile Thumbnail'

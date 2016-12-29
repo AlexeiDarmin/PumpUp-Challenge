@@ -12,7 +12,25 @@ const requestBodies = {
     "_method": "POST",
     "_version": "4.7.0",
     "_SessionToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g"
+  },
+  fetchUserFeedPhotos: {
+    "isThumbnailsOnly": true,
+    "limit": 5,
+    "userId": 2707798,
+    "_method": "POST",
+    "_version": "4.7.0",
+    "_SessionToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g"
   }
+}
+
+export const fetchUserFeedPhotos = () => (dispatch) => {
+  return fetch('http://api.pumpup.com/1/functions/feed/profile/load-batch', {
+    headers: {'Content-Type': 'application/json'},
+    method: 'POST',
+    body: JSON.stringify(requestBodies.fetchUserFeedPhotos)
+  })
+  .then((response) => response.json())
+  .then((result) => dispatch({ type: types.FETCH_USER_FEED_PHOTOS, payload: result }))
 }
 
 export const fetchPopularFeedPhotos = () => (dispatch) => {

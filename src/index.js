@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import createLogger from 'redux-logger'
 import thunk from 'redux-thunk'
 import reducer from './reducers'
-import { loadUserProfile, fetchPopularFeedPhotos } from './actions'
+import { loadUserProfile, fetchPopularFeedPhotos, fetchUserFeedPhotos } from './actions'
 import App from './containers/App'
 
 
@@ -22,7 +22,7 @@ const store = createStore(
 
 store.dispatch(loadUserProfile())
 store.dispatch(fetchPopularFeedPhotos())
-// store.dispatch(getUserPopularPhotos)
+store.dispatch(fetchUserFeedPhotos())
 
 render(
   <Provider store={store}>

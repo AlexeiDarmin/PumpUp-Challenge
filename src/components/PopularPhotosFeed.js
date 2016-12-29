@@ -18,10 +18,10 @@ class PopularPhotosFeed extends React.Component {
 
   render(){
     const { thumbnails } = this.props
-    console.log('rendering')
+
     const feedNode = document.getElementById('popularPhotosFeed')
 
-    const width = feedNode ? feedNode.offsetWidth : undefined
+    const width = feedNode ? feedNode.offsetWidth : 0
 
     let i = -1
     return (

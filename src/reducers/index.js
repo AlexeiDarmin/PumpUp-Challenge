@@ -1,9 +1,5 @@
 import { combineReducers } from 'redux'
 
-// import cart, * as fromCart from './cart'
-// import products, * as fromProducts from './products'
-
-
 const defaults = {
   userProfile: {
     bio: '',
@@ -11,6 +7,9 @@ const defaults = {
     profileThumbnail: ''
   },
   popularFeedPhotos: {
+    thumbnails: []
+  },
+  slider: {
     thumbnails: []
   }
 }
@@ -35,10 +34,20 @@ const popularFeedPhotos = (state = defaults.popularFeedPhotos, action) => {
   }
 }
 
+const slider = (state = defaults.slider, action) => {
+  if (action.type === 'FETCH_USER_FEED_PHOTOS'){
+    const photos = action.payload.result.posts.map((post) => post.thumbnail)
+    return { thumbnails: photos}
+  }
+  return state
+}
+
 export default combineReducers({
   userProfile,
-  popularFeedPhotos
+  popularFeedPhotos,
+  slider
 })
 
 export const getUserProfile = (state) => state.userProfile
 export const getPopularPhotosFeed = (state) => state.popularFeedPhotos
+export const getSlider = (state) => state.slider

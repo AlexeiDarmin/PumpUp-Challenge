@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1; user-scalable=no">
     <title>Redux Shopping Cart Example</title>
   </head>
 
@@ -10,6 +10,7 @@
     body{
       margin: 0;
       background:gray;
+      overflow-x:hidden;
     }
     body, h1, h2, span, p, div {
       font-family: Helvetica, sans-serif;
@@ -81,8 +82,37 @@
     .popularPhoto:nth-child(3n + 1){
       border-left: none;
     }
-    .popularPhoto:nth-child(2n + 1){
+    .popularPhoto:nth-child(3n){
       border-right: none;
+    }
+
+    .slider{
+      width:90%;
+      margin: 20px auto;
+      overflow: auto;
+      font-size: 0;
+      line-height: 0;
+      position:relative;
+    }
+
+    .slider::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sliderFrame {
+      width: 100%;
+      display:inline-block;
+      position:relative;
+    }
+
+    .sliderPhoto{
+      float:left;
+    }
+
+    #root {
+      max-width: 800px;
+      margin: auto;
+      overflow: hidden;
     }
   </style>
 
