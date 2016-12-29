@@ -13,8 +13,6 @@ const animateScrollLeft = (node, destination, speed, min, max) => {
 
   node.scrollLeft += speed
 
-  console.log(node.scrollLeft, destination, speed)
-
   window.requestAnimationFrame(() => animateScrollLeft(node, destination, speed))
 }
 
@@ -23,7 +21,6 @@ var yDown = null;
 var currIndex = null
 
 function handleTouchStart(evt) {
-    console.log('something is happened')
     xDown = evt.touches[0].clientX;
     yDown = evt.touches[0].clientY;
 
@@ -32,8 +29,25 @@ function handleTouchStart(evt) {
     currIndex = Math.floor(scrollNode.scrollLeft / frameWidth)
 };
 
+
+// starts the animation that will move the slider to the frame at index
+const goToFrame = (el) => {
+  const frameWidth = el.offsetWidth
+  const scrollNode = el.parentNode.parentNode
+
+  const min = 0
+  const max = el.parentNode.offsetWidth
+  const destination = currIndex * frameWidth
+
+  // diff slows down the speed if multiple indexes are being passed
+  const diff = Math.ceil(Math.abs(destination - scrollNode.scrollLeft) / frameWidth)
+  const speed = Math.round(((destination - scrollNode.scrollLeft) / 5) + 1) / diff
+
+  window.requestAnimationFrame(() => animateScrollLeft(scrollNode, destination, speed, min, max))
+}
+
+
 function handleTouchMove(evt) {
-    // evt.preventDefault()
     if ( ! xDown || ! yDown ) {
         return;
     }
@@ -56,29 +70,18 @@ function handleTouchMove(evt) {
         scrollNode.style.overflow = ''
 
         setTimeout(() => {
-          let destination, speed
-          let index = currIndex
-
           if ( xDiff > 0 ) {
               /* left swipe */
               if (xDiff > frameWidth / 3) {
-                destination = (index + 1) * frameWidth
-              } else {
-                destination = index * frameWidth
+                currIndex += 1
               }
           } else {
               /* right swipe */
               if (xDiff < frameWidth / -3){
-                destination = (index - 1) * frameWidth
-              } else {
-                destination = index * frameWidth
+                currIndex -= 1
               }
           }
-          let min = 0
-          let max = el.parentNode.offsetWidth
-          speed = Math.round(((destination - scrollNode.scrollLeft) / 5) + 1)
-          window.requestAnimationFrame(() => animateScrollLeft(scrollNode, destination, speed, min, max))
-
+          goToFrame(el)
           /* reset values */
           xDown = null;
           yDown = null
@@ -86,6 +89,7 @@ function handleTouchMove(evt) {
       }, 20)
     }
 }
+
 
 class Slider extends React.Component {
 
@@ -116,24 +120,52 @@ class Slider extends React.Component {
     const width = sliderNode ? sliderNode.offsetWidth : 0
     const frameWidth = width * thumbnails.length
 
+    //node, destination, speed, min, max
+    const skipToFrame = () => {
+      console.log(j, this)
+    }
+
     let i = -1
+    let j = -1
     return (
-      <div className='slider' id='slider'>
-        <div className='sliderFrame' style={{width: frameWidth}}>
-        {
-          thumbnails.map((thumbnail) => {
-            ++i
-            return (
-              <img
-                src={thumbnail}
-                alt='Slider'
-                className='sliderPhoto'
-                key={i}
-                style={{width: width, height: width}}
-              />
-            )
-          })
-        }
+      <div className='sliderContainer'>
+        <div className='slider' id='slider'>
+          <div className='sliderFrame' style={{width: frameWidth}}>
+          {
+            thumbnails.map((thumbnail) => {
+              ++i
+              return (
+                <img
+                  src={thumbnail}
+                  alt='Slider'
+                  className='sliderPhoto'
+                  key={i}
+                  style={{width: width, height: width}}
+                />
+              )
+            })
+          }
+          </div>
+        </div>
+        <div className='sliderNav'>
+          {
+            thumbnails.map((thumbnail) => {
+              ++j
+              const index = j
+              return (
+                <div
+                  onClick={() => {
+                    currIndex = index
+                    console.log(index, this)
+                    const node = document.getElementsByClassName('sliderPhoto')[0]
+                    goToFrame(node)
+                  }}
+                  className='sliderNavIcon'
+                  key={j}
+                />
+              )
+            })
+          }
         </div>
       </div>
     )
