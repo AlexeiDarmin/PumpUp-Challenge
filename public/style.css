@@ -1,0 +1,147 @@
+
+
+
+/*///////////////
+// Page Styles //
+///////////////*/
+
+
+body{
+  margin: 0;
+  background:white;
+  overflow-x:hidden;
+}
+
+body, h1, h2, span, p, div {
+  font-family: Helvetica, sans-serif;
+}
+
+#root {
+  max-width: 800px;
+  margin: auto;
+  overflow: hidden;
+}
+
+
+
+/*///////////////////
+// userProfileCard //
+///////////////////*/
+
+
+.userBio {
+  font-size: 0.85em;
+  display: block;
+  line-height: 1.5;
+  text-align:justify;
+  word-break: break-all;
+  width:100%;
+}
+
+.userContainer{
+  max-width: 800px;
+  width: 100%;
+  margin: auto;
+  border-bottom: 1px solid black;
+  overflow: auto;
+  background:rgba(44, 191, 236, 0.17);
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.userThumbnail {
+  border-radius: 50%;
+  float: left;
+  max-width: 100px;
+  min-width: 75px;
+  width: 25%;
+  margin-bottom:auto;
+  margin-top:10px;
+  margin-right: 15px;
+}
+
+.userName {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+#truncator {
+  position: absolute;
+  visibility: hidden;
+  height: auto;
+  width: auto;
+  white-space: nowrap;
+  overflow: auto;
+  text-overflow: visible;
+}
+
+
+
+/*/////////////
+// imageGrid //
+/////////////*/
+
+
+
+.photoGrid {
+  width: 100%;
+  margin:0;
+  padding: 0;
+  font-size: 0;
+}
+
+.gridPhoto{
+  width: calc(100% / 3);
+  box-sizing: border-box;
+  border: 1px solid white;
+  margin:0;
+}
+
+
+
+/*//////////
+// slider //
+//////////*/
+
+
+.slider{
+  width:90%;
+  margin: 20px auto 0 auto;
+  overflow: auto;
+  font-size: 0;
+  line-height: 0;
+  position:relative;
+}
+
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+.sliderFrame {
+  width: 100%;
+  display:inline-block;
+  position:relative;
+}
+
+.sliderPhoto{
+  float:left;
+}
+
+.sliderNav {
+  overflow: auto;
+  margin:auto;
+  display:block;
+  text-align: center;
+}
+.sliderNavIcon {
+  border-radius: 50%;
+  background: #2bbeeb;
+  width: 10px;
+  height: 10px;
+  padding: 5px;
+  display: inline-block;
+  margin:10px;
+}

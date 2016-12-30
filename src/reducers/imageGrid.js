@@ -1,19 +1,19 @@
-import { FETCH_POPULAR_FEED_PHOTOS } from '../constants/ActionTypes'
+import { ADD_GRID_IMAGES } from '../constants/ActionTypes'
 
 
 const initialState = {
-  thumbnails: []
+  images: []
 }
+
 
 const imageGrid = (state = initialState, action) => {
 
-  if (action.type === FETCH_POPULAR_FEED_PHOTOS){
-    const photos = action.payload.result.posts.map((post) => post.thumbnail)
-    return { thumbnails: photos }
+  if (action.type === ADD_GRID_IMAGES){
+    return { images: action.payload }
   }
 
   return state
-  
+
 }
 
 export default imageGrid

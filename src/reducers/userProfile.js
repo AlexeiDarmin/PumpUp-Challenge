@@ -1,4 +1,6 @@
-import { LOAD_USER_PROFILE } from '../constants/ActionTypes'
+import { ADD_USER_PROFILE } from '../constants/ActionTypes'
+
+
 
 const initialState = {
   bio: '',
@@ -6,9 +8,10 @@ const initialState = {
   profileThumbnail: ''
 }
 
+
 const userProfile = (state = initialState, action) => {
 
-  if (action.type === LOAD_USER_PROFILE){
+  if (action.type === ADD_USER_PROFILE){
     return {
       bio: action.payload.bio,
       name: action.payload.name,

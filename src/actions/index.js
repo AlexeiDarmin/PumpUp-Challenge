@@ -1,54 +1,34 @@
-import * as types from '../constants/ActionTypes'
+import * as types         from '../constants/ActionTypes'
+import { requests }       from '../constants/Api'
+import { handleRequest }  from '../utils/index'
 
-const requestBodies = {
-  getUserProfile : {
-    '_method': 'GET',
-    '_version': '4.7.0',
-    '_SessionToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g'
-  },
-  fetchPopularFeedPhotos: {
-    'isThumbnailsOnly': true,
-    'limit': 18,
-    '_method': 'POST',
-    '_version': '4.7.0',
-    '_SessionToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g'
-  },
-  fetchUserFeedPhotos: {
-    'isThumbnailsOnly': true,
-    'limit': 5,
-    'userId': 2707798,
-    '_method': 'POST',
-    '_version': '4.7.0',
-    '_SessionToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjI3MDc3OTgsImV4cCI6MTUzOTUzNTI1OTM2OH0.UK2qP1yk9QLk_Bkx1Ly0RPaitRYtec8ojZhzYRc0D-g'
-  }
-}
+
 
 export const fetchUserFeedPhotos = () => (dispatch) => {
-  return fetch('http://api.pumpup.com/1/functions/feed/profile/load-batch', {
-    headers: {'Content-Type': 'application/json'},
-    method: 'POST',
-    body: JSON.stringify(requestBodies.fetchUserFeedPhotos)
+
+  return handleRequest(requests.userPhotosFeed)
+  .then((result) => {
+
+    const payload = result.result.posts.map((post) => post.thumbnail)
+    dispatch({ type: types.ADD_SLIDER_IMAGES, payload })
   })
-  .then((response) => response.json())
-  .then((result) => dispatch({ type: types.FETCH_USER_FEED_PHOTOS, payload: result }))
+
 }
+
 
 export const fetchPopularFeedPhotos = () => (dispatch) => {
-  return fetch('http://api.pumpup.com/1/functions/feed/popular/load-batch', {
-    headers: {'Content-Type': 'application/json'},
-    method: 'POST',
-    body: JSON.stringify(requestBodies.fetchPopularFeedPhotos)
+
+  return handleRequest(requests.popularPhotosFeed)
+  .then((result) => {
+
+    const payload = result.result.posts.map((post) => post.thumbnail)
+    dispatch({ type: types.ADD_GRID_IMAGES, payload })
   })
-  .then((response) => response.json())
-  .then((result) => dispatch({ type: types.FETCH_POPULAR_FEED_PHOTOS, payload: result }))
+
 }
 
-export const loadUserProfile = () => (dispatch) => {
-  return fetch('http://api.pumpup.com/1/classes/User/318381', {
-    headers: {'Content-Type': 'application/json'},
-    method: 'POST',
-    body: JSON.stringify(requestBodies.getUserProfile)
-  })
-  .then((response) => response.json())
-  .then((result) => dispatch({ type: types.LOAD_USER_PROFILE, payload: result }))
+
+export const fetchUserProfile = () => (dispatch) => {
+  return handleRequest(requests.loadUserProfile)
+  .then((result) => dispatch({ type: types.ADD_USER_PROFILE, payload: result }))
 }

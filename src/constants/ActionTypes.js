@@ -1,3 +1,3 @@
-export const LOAD_USER_PROFILE          = 'LOAD_USER_PROFILE'
-export const FETCH_POPULAR_FEED_PHOTOS  = 'FETCH_POPULAR_FEED_PHOTOS'
-export const FETCH_USER_FEED_PHOTOS     = 'FETCH_USER_FEED_PHOTOS'
+export const ADD_USER_PROFILE           = 'ADD_USER_PROFILE'
+export const ADD_GRID_IMAGES            = 'ADD_GRID_IMAGES'
+export const ADD_SLIDER_IMAGES          = 'ADD_SLIDER_IMAGES'

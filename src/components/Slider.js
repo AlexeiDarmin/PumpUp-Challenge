@@ -1,8 +1,23 @@
 import React, { PropTypes } from 'react'
 
 
+/*TODO
+  1 - replace getElementById with ref's
+  2 - replace global vars with local state
+  3 - remove ambigious node references from functions like `el.parentNode.parentNode`
+  4 - profit
+*/
+
+
+let xDown = null
+let currIndex = null
 
 class Slider extends React.Component {
+
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps)
+  }
 
 
   componentDidMount () {
@@ -78,7 +93,12 @@ class Slider extends React.Component {
 //////////////////////
 
 
-
+/**
+ * Animates scroll frames linearly until destination is reached.
+ * @param  {Object} node DOM node that is used to animate slider.
+ * @param  {Int} destination desired `.scrollLeft` property of node
+ * @param  {Int} speed the amount of px to scroll per animation frame
+ */
 function animateScrollFrame (node, destination, speed) {
 
   node.scrollLeft += speed
@@ -97,9 +117,12 @@ function animateScrollFrame (node, destination, speed) {
 
 }
 
-let xDown = null
-let currIndex = null
 
+
+/**
+ * Stores the starting position of a touch event
+ * @param  {event} e touch event
+ */
 function handleTouchStart (e) {
 
   xDown = e.touches[0].clientX
@@ -110,6 +133,12 @@ function handleTouchStart (e) {
 
 }
 
+
+
+/**
+ * Triggers the first animation frame to go to the currIndex's frame.
+ * @param  {Object} el is a frame element of the slider.
+ */
 function goToFrame (el) {
 
   const frameWidth  = el.offsetWidth
@@ -134,6 +163,11 @@ function goToFrame (el) {
 }
 
 
+
+/**
+ * Modifies index of slideshow if the swipe is large enough
+ * @param  {event} e touch event
+ */
 function handleTouchMove (e) {
   if (!xDown) { return }
 
@@ -145,7 +179,11 @@ function handleTouchMove (e) {
   const frameWidth  = el.offsetWidth
   const scrollNode  = el.parentNode.parentNode
 
-  // Disables inertial scrolling
+  /*
+    Disables inertial scrolling on all devices by temporarily disabling overflow.
+    The setTimeouts are necassary to allow the DOM to render at least one frame
+    with the desired CSS properties before continueing.
+  */
   scrollNode.style.overflow = 'hidden'
   setTimeout(() => {
     scrollNode.style.overflow = ''

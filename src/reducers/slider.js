@@ -1,14 +1,15 @@
-import { FETCH_USER_FEED_PHOTOS } from '../constants/ActionTypes'
+import { ADD_SLIDER_IMAGES } from '../constants/ActionTypes'
+
 
 const initialState = {
-  thumbnails: []
+  images: []
 }
+
 
 const slider = (state = initialState, action) => {
 
-  if (action.type === FETCH_USER_FEED_PHOTOS){
-    const photos = action.payload.result.posts.map((post) => post.thumbnail)
-    return { thumbnails: photos}
+  if (action.type === ADD_SLIDER_IMAGES){
+    return { images: action.payload }
   }
 
   return state
