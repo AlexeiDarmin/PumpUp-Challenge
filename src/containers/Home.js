@@ -1,14 +1,18 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { getUserProfile, getPopularPhotosFeed, getSlider } from '../reducers'
+
+import { getUserProfile, getImageGrid, getSlider } from '../reducers'
+
 import UserProfile from '../components/UserProfile'
-import PopularPhotosFeed from '../components/PopularPhotosFeed'
+import ImageGrid from '../components/ImageGrid'
 import Slider from '../components/Slider'
 
-class App extends React.Component {
+
+
+class Home extends React.Component {
   render(){
     const { bio, name, profileThumbnail } = this.props.userProfile
-    const { thumbnails } = this.props.popularPhotosFeed
+    const { thumbnails } = this.props.imageGrid
     const sliderThumbnails = this.props.slider.thumbnails
 
     return (
@@ -19,27 +23,35 @@ class App extends React.Component {
           profileThumbnail={profileThumbnail}
           />
         <Slider thumbnails={sliderThumbnails}/>
-        <PopularPhotosFeed thumbnails={thumbnails} />
+        <ImageGrid thumbnails={thumbnails} />
       </div>
     )
   }
 }
 
-App.propTypes = {
+
+Home.propTypes = {
   userProfile: PropTypes.shape({
-    bio: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    bio:              PropTypes.string.isRequired,
+    name:             PropTypes.string.isRequired,
     profileThumbnail: PropTypes.string.isRequired
-  }).isRequired
+  }).isRequired,
+  slider: PropTypes.shape({
+    thumbnails: PropTypes.array.isRequired
+  }),
+  imageGrid: PropTypes.shape({
+    thumbnails: PropTypes.array.isRequired
+  })
 }
 
 
 const mapStateToProps = (state) => ({
   userProfile:        getUserProfile(state),
-  popularPhotosFeed:  getPopularPhotosFeed(state),
+  imageGrid:          getImageGrid(state),
   slider:             getSlider(state)
 })
 
+
 export default connect(
   mapStateToProps
-)(App)
+)(Home)

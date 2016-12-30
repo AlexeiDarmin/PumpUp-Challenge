@@ -122,16 +122,9 @@ class UserProfile extends React.Component {
     return (
       <div className='userContainer'>
         <div id="truncator" className="userBio"> {bio} </div>
-        <img
-          className='userThumbnail'
-          alt='Profile Thumbnail'
-          src={profileThumbnail}
-        />
+        <img className='userThumbnail' alt='Profile' src={profileThumbnail}/>
         <div style={{width: '100%'}}>
-          <h2 className='userName'>
-            {name}
-          </h2>
-
+          <h2 className='userName'>{name}</h2>
           <span
             id='bio'
             className='userBio'
