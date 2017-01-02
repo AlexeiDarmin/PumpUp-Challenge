@@ -114,6 +114,11 @@ class UserProfile extends React.Component {
     const summary = expanded ? addLinks(bio) : addLinks(snippet)
 
 
+    /**
+     * Sensitive timing for DOM refs
+     */
+
+     
     const refs = {
       truncatorNode: undefined,
       bioNode: undefined
@@ -142,6 +147,11 @@ class UserProfile extends React.Component {
       trySetState()
     }
 
+
+
+        /**
+         * render return
+         */
 
     return (
       <div className='userContainer'>

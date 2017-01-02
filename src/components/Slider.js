@@ -1,9 +1,6 @@
 import React, { PropTypes } from 'react'
 
 
-//TODO remove the last few remaining non-state bound variables
-let rootNode        = undefined
-let sliderFrameNode = undefined
 
 class Slider extends React.Component {
 
@@ -25,52 +22,76 @@ class Slider extends React.Component {
 
 
   componentDidMount () {
-
     let rerender = () => this.forceUpdate()
     window.addEventListener('resize', rerender)
-
-    const sliderFrame = document.getElementsByClassName('sliderFrame')[0]
-
-    setTimeout(sliderFrame.addEventListener('touchstart', this.handleTouchStart, false), 0)
-    setTimeout(sliderFrame.addEventListener('touchend', this.handleTouchMove, false), 0)
-
   }
-
 
 
   componentDidUpdate(){
     this.updateSlide()
   }
 
-
   componentWillUnmount () {
     let rerender = () => this.forceUpdate()
     window.addRemoveListener('resize', rerender)
   }
 
+
   render(){
-    const { containerNode } = this.state
+    const { containerNode, sliderNode } = this.state
     const { thumbnails }    = this.props
 
-    const sliderNode  = rootNode
-    const width       = sliderNode ? sliderNode.offsetWidth : 0
+    const width       = containerNode ? containerNode.offsetWidth : 0
     const frameWidth  = width * thumbnails.length
 
-    const setRootNode = (node) => {
-      if (!rootNode) {
+
+
+    /**
+     * Sensitive timing for DOM refs
+     */
+
+    const refs = {
+      containerNode: undefined,
+      sliderNode: undefined
+    }
+
+    // Update state once both DOM references have been stored in 'refs'.
+    const trySetState = () => {
+      if (refs.containerNode && refs.sliderNode && !containerNode && !sliderNode){
+        console.log("CUSTOM SET STATE GOING")
         this.setState({
-          containerNode: node,
-          sliderNode: node.children[0]
+          containerNode: refs.containerNode,
+          sliderNode: refs.sliderNode
+        }, () => {
+          const { sliderNode }  = this.state
+
+          // setTimeout allows a single DOM render cycle
+          setTimeout(sliderNode.addEventListener('touchstart', this.handleTouchStart, false), 0)
+          setTimeout(sliderNode.addEventListener('touchend', this.handleTouchMove, false), 0)
+
         })
-        rootNode        = node
-        sliderFrameNode = node.children[0]
       }
     }
 
+    const setContainerNode  = (node) => {
+      refs.containerNode = node
+      trySetState()
+    }
+    const setSliderNode = (node) => {
+      refs.sliderNode = node
+      trySetState()
+    }
+
+
+    /**
+     * render return
+     */
+
+
     return (
       <div className='sliderContainer'>
-        <div className='slider' ref={setRootNode} style={{overflow: 'hidden'}}>
-          <div className='sliderFrame' style={{width: frameWidth}}>
+        <div className='slider' ref={setContainerNode} style={{overflow: 'hidden'}}>
+          <div className='sliderFrame' ref={setSliderNode} style={{width: frameWidth}}>
           {
             thumbnails.map((thumbnail, i) => (
                 <img
