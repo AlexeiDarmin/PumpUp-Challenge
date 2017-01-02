@@ -1,22 +1,26 @@
 import React, { PropTypes } from 'react'
 
 
-/*TODO
-  1 - replace getElementById with ref's
-  2 - replace global vars with local state
-  3 - remove ambigious node references from functions like `el.parentNode.parentNode`
-  4 - profit
-*/
-
-
-let xDown = null
-let currIndex = null
+//TODO remove the last few remaining non-state bound variables
+let rootNode        = undefined
+let sliderFrameNode = undefined
 
 class Slider extends React.Component {
 
 
-  componentWillReceiveProps(nextProps){
-    console.log(nextProps)
+  constructor(){
+    super()
+
+    this.state = {
+      index: 0,
+      xDown: undefined,
+      containerNode: undefined,
+      sliderNode: undefined
+    }
+
+    this.updateSlide      = this.updateSlide.bind(this)
+    this.handleTouchStart = this.handleTouchStart.bind(this)
+    this.handleTouchMove  = this.handleTouchMove.bind(this)
   }
 
 
@@ -27,10 +31,17 @@ class Slider extends React.Component {
 
     const sliderFrame = document.getElementsByClassName('sliderFrame')[0]
 
-    setTimeout(sliderFrame.addEventListener('touchstart', handleTouchStart, false), 0)
-    setTimeout(sliderFrame.addEventListener('touchend', handleTouchMove, false), 0)
+    setTimeout(sliderFrame.addEventListener('touchstart', this.handleTouchStart, false), 0)
+    setTimeout(sliderFrame.addEventListener('touchend', this.handleTouchMove, false), 0)
 
   }
+
+
+
+  componentDidUpdate(){
+    this.updateSlide()
+  }
+
 
   componentWillUnmount () {
     let rerender = () => this.forceUpdate()
@@ -38,16 +49,27 @@ class Slider extends React.Component {
   }
 
   render(){
-    const { thumbnails } = this.props
+    const { containerNode } = this.state
+    const { thumbnails }    = this.props
 
-    const sliderNode = document.getElementById('slider')
+    const sliderNode  = rootNode
+    const width       = sliderNode ? sliderNode.offsetWidth : 0
+    const frameWidth  = width * thumbnails.length
 
-    const width = sliderNode ? sliderNode.offsetWidth : 0
-    const frameWidth = width * thumbnails.length
+    const setRootNode = (node) => {
+      if (!rootNode) {
+        this.setState({
+          containerNode: node,
+          sliderNode: node.children[0]
+        })
+        rootNode        = node
+        sliderFrameNode = node.children[0]
+      }
+    }
 
     return (
       <div className='sliderContainer'>
-        <div className='slider' id='slider'>
+        <div className='slider' ref={setRootNode} style={{overflow: 'hidden'}}>
           <div className='sliderFrame' style={{width: frameWidth}}>
           {
             thumbnails.map((thumbnail, i) => (
@@ -67,11 +89,7 @@ class Slider extends React.Component {
           {
             thumbnails.map((thumbnail, j) => (
                 <div
-                  onClick={() => {
-                    currIndex = j
-                    const node = document.getElementsByClassName('sliderPhoto')[0]
-                    goToFrame(node)
-                  }}
+                  onClick={() => {this.setState({index: j})}}
                   className='sliderNavIcon'
                   key={j}
                 />
@@ -82,15 +100,90 @@ class Slider extends React.Component {
       </div>
     )
   }
+
+
+
+  //////////////////////
+  // SLIDER FUNCTIONS //
+  //////////////////////
+
+
+
+
+
+  /**
+   * Triggers the first animation frame to go to the next Index's frame.
+   */
+  updateSlide() {
+
+    const { index, containerNode, sliderNode } = this.state
+
+    const frameWidth  = containerNode.offsetWidth
+    const min         = 0
+    const max         = sliderNode.offsetWidth
+    const destination = index * frameWidth
+
+    // Enforce bounds on frames
+    if (destination < min)  { return }
+    if (destination >= max) { return }
+
+    // Decrease speed relative to number of indecies being animated
+    const frames  = Math.ceil(Math.abs(destination - containerNode.scrollLeft) / frameWidth)
+    const speed   = Math.round(((destination - containerNode.scrollLeft) / 10) + 1) / frames
+
+    window.requestAnimationFrame(() => {
+      animateScrollFrame(containerNode, destination, speed)
+    })
+
+  }
+
+
+  /**
+   * Stores the starting x position of a touch event
+   * @param  {event} e touch event
+   */
+   handleTouchStart (e) {
+    this.setState({xDown: e.touches[0].clientX})
+  }
+
+
+  /**
+   * Modifies index of slideshow if the swipe is large enough
+   * @param  {event} e touch event
+   */
+  handleTouchMove (e) {
+    const {xDown, containerNode, sliderNode, index} = this.state
+
+    if (!xDown) { return }
+
+    const xUp    = e.changedTouches[0].clientX
+    const xDiff = xDown - xUp
+
+    const frameWidth  = containerNode.offsetWidth
+
+    //BUG disable inertial scrolling
+
+    let nextIndex
+    if (xDiff > 0 && xDiff > frameWidth / 3) {
+      // Left swipe above threshold
+      nextIndex = index + 1
+    } else if (xDiff < 0 && xDiff < frameWidth / 3) {
+      // Right swipe above threshold
+      nextIndex = index - 1
+    }
+
+    if (isValidIndex(containerNode, sliderNode, nextIndex)){
+      this.setState({
+        index: nextIndex,
+        xDown: null
+      })
+    }
+
+  }
+
 }
 
 
-
-
-
-//////////////////////
-// SLIDER FUNCTIONS //
-//////////////////////
 
 
 /**
@@ -120,88 +213,16 @@ function animateScrollFrame (node, destination, speed) {
 
 
 /**
- * Stores the starting position of a touch event
- * @param  {event} e touch event
+ * Returns true if the index is within the bounds of the container and slider elements.
+ * @param  {Object} container DOM node that is the slider container
+ * @param  {Object} slider DOM node that is the slider with scrollLeft property
+ * @param  {Int}    index the next index to go to
  */
-function handleTouchStart (e) {
-
-  xDown = e.touches[0].clientX
-
-  let scrollNode = e.target.parentNode.parentNode
-  const frameWidth = e.target.offsetWidth
-  currIndex = Math.floor(scrollNode.scrollLeft / frameWidth)
-
+const isValidIndex = (container, slider, index) => {
+  const max = (slider.offsetWidth / container.offsetWidth) - 1
+  if (index >= 0 && index <= max) return true
 }
 
-
-
-/**
- * Triggers the first animation frame to go to the currIndex's frame.
- * @param  {Object} el is a frame element of the slider.
- */
-function goToFrame (el) {
-
-  const frameWidth  = el.offsetWidth
-  const node        = el.parentNode.parentNode
-
-  const min         = 0
-  const max         = el.parentNode.offsetWidth
-  const destination = currIndex * frameWidth
-
-  // Enforce bounds on frames
-  if (destination < min)  { return }
-  if (destination >= max) { return }
-
-  // Decrease speed relative to number of indecies being animated
-  const frames = Math.ceil(Math.abs(destination - node.scrollLeft) / frameWidth)
-  const speed = Math.round(((destination - node.scrollLeft) / 5) + 1) / frames
-
-  window.requestAnimationFrame(() => {
-    animateScrollFrame(node, destination, speed)
-  })
-
-}
-
-
-
-/**
- * Modifies index of slideshow if the swipe is large enough
- * @param  {event} e touch event
- */
-function handleTouchMove (e) {
-  if (!xDown) { return }
-
-  const xUp = e.changedTouches[0].clientX
-
-  let xDiff = xDown - xUp
-
-  const el          = e.target
-  const frameWidth  = el.offsetWidth
-  const scrollNode  = el.parentNode.parentNode
-
-  /*
-    Disables inertial scrolling on all devices by temporarily disabling overflow.
-    The setTimeouts are necassary to allow the DOM to render at least one frame
-    with the desired CSS properties before continueing.
-  */
-  scrollNode.style.overflow = 'hidden'
-  setTimeout(() => {
-    scrollNode.style.overflow = ''
-    setTimeout(() => {
-      if (xDiff > 0 && xDiff > frameWidth / 3) {
-        // Left swipe above threshold
-        currIndex += 1
-      } else if (xDiff < 0 && xDiff < frameWidth / 3) {
-        // Right swipe above threshold
-        currIndex -= 1
-      }
-      goToFrame(el)
-      /* reset values */
-      xDown = null
-    }, 20)
-  }, 20)
-
-}
 
 
 Slider.propTypes = {
