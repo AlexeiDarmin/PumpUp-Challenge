@@ -68,17 +68,6 @@ body, h1, h2, span, p, div {
   margin-top: 0;
 }
 
-#truncator {
-  position: absolute;
-  visibility: hidden;
-  height: auto;
-  width: auto;
-  white-space: nowrap;
-  overflow: auto;
-  text-overflow: visible;
-}
-
-
 
 /*/////////////
 // imageGrid //
