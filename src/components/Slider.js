@@ -10,20 +10,21 @@ class Slider extends React.Component {
 
     this.state = {
       index: 0,
-      xDown: undefined,
-      containerNode: undefined,
-      sliderNode: undefined
+      xDown: undefined
     }
-
-    this.updateSlide      = this.updateSlide.bind(this)
-    this.handleTouchStart = this.handleTouchStart.bind(this)
-    this.handleTouchMove  = this.handleTouchMove.bind(this)
   }
 
 
   componentDidMount () {
-    let rerender = () => this.forceUpdate()
+    const { sliderNode } = this
+
+    const rerender = () => this.forceUpdate()
     window.addEventListener('resize', rerender)
+
+    if (!sliderNode) return
+
+    setTimeout(sliderNode.addEventListener('touchstart', this.handleTouchStart, false), 0)
+    setTimeout(sliderNode.addEventListener('touchend', this.handleTouchMove, false), 0)
   }
 
 
@@ -38,50 +39,13 @@ class Slider extends React.Component {
 
 
   render(){
-    const { containerNode, sliderNode } = this.state
+    const { containerNode } = this
     const { thumbnails }    = this.props
 
     const width       = containerNode ? containerNode.offsetWidth : 0
     const frameWidth  = width * thumbnails.length
 
-
-
-    /**
-     * Sensitive timing for DOM refs
-     */
-
-    const refs = {
-      containerNode: undefined,
-      sliderNode: undefined
-    }
-
-    // Update state once both DOM references have been stored in 'refs'.
-    const trySetState = () => {
-      if (refs.containerNode && refs.sliderNode && !containerNode && !sliderNode){
-        console.log("CUSTOM SET STATE GOING")
-        this.setState({
-          containerNode: refs.containerNode,
-          sliderNode: refs.sliderNode
-        }, () => {
-          const { sliderNode }  = this.state
-
-          // setTimeout allows a single DOM render cycle
-          setTimeout(sliderNode.addEventListener('touchstart', this.handleTouchStart, false), 0)
-          setTimeout(sliderNode.addEventListener('touchend', this.handleTouchMove, false), 0)
-
-        })
-      }
-    }
-
-    const setContainerNode  = (node) => {
-      refs.containerNode = node
-      trySetState()
-    }
-    const setSliderNode = (node) => {
-      refs.sliderNode = node
-      trySetState()
-    }
-
+    const ctx = this
 
     /**
      * render return
@@ -90,8 +54,8 @@ class Slider extends React.Component {
 
     return (
       <div className='sliderContainer'>
-        <div className='slider' ref={setContainerNode} style={{overflow: 'hidden'}}>
-          <div className='sliderFrame' ref={setSliderNode} style={{width: frameWidth}}>
+        <div className='slider' ref={(node) => ctx.containerNode = node} style={{overflow: 'hidden'}}>
+          <div className='sliderFrame' ref={(node) => ctx.sliderNode = node} style={{width: frameWidth}}>
           {
             thumbnails.map((thumbnail, i) => (
                 <img
@@ -135,9 +99,11 @@ class Slider extends React.Component {
   /**
    * Triggers the first animation frame to go to the next Index's frame.
    */
-  updateSlide() {
+  updateSlide = () => {
+    const { containerNode, sliderNode } = this
+    const { index }                     = this.state
 
-    const { index, containerNode, sliderNode } = this.state
+    if (!containerNode || !sliderNode) return
 
     const frameWidth  = containerNode.offsetWidth
     const min         = 0
@@ -163,7 +129,7 @@ class Slider extends React.Component {
    * Stores the starting x position of a touch event
    * @param  {event} e touch event
    */
-   handleTouchStart (e) {
+   handleTouchStart = (e) => {
     this.setState({xDown: e.touches[0].clientX})
   }
 
@@ -172,8 +138,9 @@ class Slider extends React.Component {
    * Modifies index of slideshow if the swipe is large enough
    * @param  {event} e touch event
    */
-  handleTouchMove (e) {
-    const {xDown, containerNode, sliderNode, index} = this.state
+  handleTouchMove = (e) => {
+    const { containerNode, sliderNode } = this
+    const {xDown, index}                = this.state
 
     if (!xDown) { return }
 
@@ -239,7 +206,7 @@ function animateScrollFrame (node, destination, speed) {
  * @param  {Object} slider DOM node that is the slider with scrollLeft property
  * @param  {Int}    index the next index to go to
  */
-const isValidIndex = (container, slider, index) => {
+function isValidIndex (container, slider, index) {
   const max = (slider.offsetWidth / container.offsetWidth) - 1
   if (index >= 0 && index <= max) return true
 }

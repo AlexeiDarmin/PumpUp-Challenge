@@ -32,13 +32,8 @@ class UserProfile extends React.Component {
 
     this.state = {
       expanded: false,
-      snippet: '',
-      truncatorNode: undefined,
-      bioNode: undefined
+      snippet: ''
     }
-
-    this.truncateBio  = this.truncateBio.bind(this)
-    this.toggleBio    = this.toggleBio.bind(this)
 
   }
 
@@ -57,8 +52,8 @@ class UserProfile extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
 
+    const { truncatorNode, bioNode }      = this
     const { snippet, expanded }           = this.state
-    const { truncatorNode, bioNode }      = nextState
 
     const newSnippet           = nextState.snippet
     const newExpanded          = nextState.expanded
@@ -91,6 +86,7 @@ class UserProfile extends React.Component {
     const runTruncate = () => {
       this.setState({snippet: this.truncateBio(this.props.userProfile.bio)})
     }
+    runTruncate()
     window.addEventListener('resize', runTruncate)
 
   }
@@ -106,52 +102,15 @@ class UserProfile extends React.Component {
 
 
   render(){
-
-    const { expanded, snippet, truncatorNode, bioNode } = this.state
-    const { bio, name, profileThumbnail }               = this.props.userProfile
+    const { expanded, snippet }            = this.state
+    const { bio, name, profileThumbnail }  = this.props.userProfile
 
     const expandable = bio !== snippet
     const summary = expanded ? addLinks(bio) : addLinks(snippet)
 
+    // context for binding ref's to nodes
+    const ctx = this
 
-    /**
-     * Sensitive timing for DOM refs
-     */
-
-     
-    const refs = {
-      truncatorNode: undefined,
-      bioNode: undefined
-    }
-
-    // Update state once both DOM references have been stored in 'refs'.
-    const trySetState = () => {
-      if (refs.truncatorNode && refs.bioNode && !truncatorNode && !bioNode){
-        this.setState({
-          truncatorNode: refs.truncatorNode,
-          bioNode: refs.bioNode
-        }, () => {
-          // Update snippet after DOM refs are stored.
-          this.setState({snippet: this.truncateBio(bio) }
-        )})
-      }
-    }
-
-    // Setup references to DOM elements as callbacks
-    const setTruncatorNode  = (node) => {
-      refs.truncatorNode = node
-      trySetState()
-    }
-    const setBioNode = (node) => {
-      refs.bioNode = node
-      trySetState()
-    }
-
-
-
-        /**
-         * render return
-         */
 
     return (
       <div className='userContainer'>
@@ -159,7 +118,7 @@ class UserProfile extends React.Component {
         <div
           className="userBio"
           style={TRUNCATOR_STYLE}
-          ref={setTruncatorNode} >
+          ref={(node) => this.truncatorNode = node} >
           {bio}
         </div>
 
@@ -167,7 +126,7 @@ class UserProfile extends React.Component {
         <div style={{width: '100%'}}>
           <h2 className='userName'>{name}</h2>
           <span
-            ref={setBioNode}
+            ref={(node) => ctx.bioNode = node}
             className='userBio'
             onClick={expandable ? this.toggleBio : null}
           >
@@ -190,7 +149,7 @@ class UserProfile extends React.Component {
 
 
 
-  toggleBio(){
+  toggleBio = () => {
 
     const { expanded }  = this.state
     const { bio }       = this.props.userProfile
@@ -208,10 +167,10 @@ class UserProfile extends React.Component {
    * @param  {String} bio is the text to be truncated.
    * @return {String} shorter version of bio.
    */
-  truncateBio (bio) {
-    const { truncatorNode, bioNode } = this.state
+  truncateBio = (bio) => {
+    const { truncatorNode, bioNode } = this
 
-    if (!bio) { return ''}
+    if (!bio) { return '' }
 
     if (!truncatorNode || !bioNode) {
       return bio
